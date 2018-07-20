@@ -2,14 +2,17 @@
 
 use Illuminate\Routing\Router;
 
-Admin::registerAuthRoutes();
 
 Route::group([
     'prefix'        => config('admin.route.prefix'),
-    'namespace'     => config('admin.route.namespace'),
+//    'namespace'     => config('admin.route.namespace'),
     'middleware'    => config('admin.route.middleware'),
 ], function (Router $router) {
 
-    $router->get('/', 'HomeController@index');
+    $router->get('/', 'App\Admin\Controllers\HomeController@index');
+    $router->resource('category', 'App\Admin\Controllers\CategoryController');
 
 });
+
+Admin::registerAuthRoutes();
+
