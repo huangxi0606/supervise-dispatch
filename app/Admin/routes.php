@@ -11,6 +11,7 @@ Route::group([
 
     $router->get('/', 'App\Admin\Controllers\HomeController@index');
     $router->resource('category', 'App\Admin\Controllers\CategoryController');
+    $router->resource('goods', 'App\Admin\Controllers\GoodsController');
 
 });
 
