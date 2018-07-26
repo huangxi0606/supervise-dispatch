@@ -34,20 +34,18 @@ class CategoryController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('商品类别');
+            $content->header('类别');
             $content->body($this->grid());
                         $content->row(function (Row $row) {
                 $row->column(6, $this->treeView()->render());
-
-                $row->column(6, function (Column $column) {
-                    $form = new \Encore\Admin\Widgets\Form();
+//                $row->column(6, function (Column $column) {
+//                    $form = new \Encore\Admin\Widgets\Form();
 //                    $form->action(admin_base_path('auth/menu'));
-                    $form->select('parent_id', trans('admin.parent_id'))->options(Category::selectOptions());
-                    $form->text('title', trans('admin.title'))->rules('required');
-//                    $form->text('uri', trans('admin.uri'));
-////                    $form->multipleSelect('roles', trans('admin.roles'))->options(Role::all()->pluck('name', 'id'));
-                    $column->append((new Box(trans('admin.new'), $form))->style('success'));
-                });
+//                    $form->select('parent_id', trans('admin.parent_id'))->options(Category::selectOptions());
+//                    $form->text('title', trans('admin.title'))->rules('required');
+//
+//                    $column->append((new Box(trans('admin.new'), $form))->style('success'));
+//                });
             });
 
         });
@@ -66,14 +64,14 @@ class CategoryController extends Controller
     {
         return Admin::content(function (Content $content) use ($id) {
 
-            $content->header('商品分类');
+            $content->header('分类');
             $content->body($this->form()->edit($id));
         });
     }
     public function create()
     {
         return Admin::content(function (Content $content) {
-            $content->header('商品分类');
+//            $content->header('商品分类');
             $content->body($this->form());
         });
     }
@@ -81,7 +79,7 @@ class CategoryController extends Controller
     {
         return Admin::grid(Category::class, function (Grid $grid) {
             $grid->id('ID')->sortable();
-            $grid->title('分类名称');
+            $grid->title('名称');
             $grid->created_at('创建时间');
             $grid->updated_at('更新时间');
         });
@@ -91,8 +89,14 @@ class CategoryController extends Controller
         return Admin::form(Category::class, function (Form $form) {
 
             $form->display('id', 'ID');
-            $form->select('parent_id', trans('admin.parent_id'))->options(Category::selectOptions());
-            $form->text('title','分类名称');
+            $cates =Category::where("parent_id",0)->get();
+            $data=[];
+            foreach ($cates as $cate){
+                $data[$cate->id]=$cate->title;
+            }
+//            $form->select('parent_id', trans('admin.parent_id'))->options(Category::selectOptions());
+            $form->select('parent_id','所属类型')->options($data);
+            $form->text('title','名称');
             $form->display('created_at', '创建时间');
             $form->display('updated_at', '更新时间');
             $form->saved(function (Form $form){
