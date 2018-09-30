@@ -56,6 +56,11 @@ class GoodsController extends Controller
         return Admin::grid(Goods::class, function (Grid $grid) {
             $grid->id('ID')->sortable();
             $grid->name('物品名称');
+            $grid->version('手机型号');
+            $grid->log('备注');
+            $grid->type('类型');
+            $grid->location('位置');
+            $grid->question('问题');
             $arr =DB::table("contact")->get();
             foreach ($arr as $hh=> $ar){
                 $grid->column($ar->name)->display(function () use ($ar) {
@@ -66,12 +71,14 @@ class GoodsController extends Controller
                     }
                 });
             }
-
             $grid->disableExport();
             $grid->disableRowSelector();
-
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->like('name', '物品名称');
+                $filter->like('type', '类型');
+                $filter->like('version', '手机型号');
+                $filter->like('location', '位置');
+                $filter->like('question', '问题');
             });
         });
     }
@@ -80,6 +87,12 @@ class GoodsController extends Controller
         return Admin::form(Goods::class, function (Form $form)use($mode) {
             $form->display('id', 'ID');
             $form->text('name','物品名称');
+            $form->text('log','备注');
+            $form->text('version','手机型号');
+            $form->text('type','类型');
+            $form->text('location','位置');
+            $form->text('question','问题');
+            $form->text('defect','是否缺失');
             $hh =DB::table("contact")->get();
             foreach ($hh as $h) {
                 $title = Category::where("parent_id", $h->cate_id)->pluck('title');
@@ -98,13 +111,13 @@ class GoodsController extends Controller
                             }else{
                                 $form->select($h->name)->options($directors)->default();
                             }
+                    }else{
+                        $form->select($h->name)->options($directors);
                     }
                 }else{
                     $form->select($h->name)->options($directors);
               }
             }
-//            $form->display('created_at', '创建时间');
-//            $form->display('updated_at', '更新时间');
         });
     }
     public function store(){

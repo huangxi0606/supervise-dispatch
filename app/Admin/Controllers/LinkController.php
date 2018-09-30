@@ -32,13 +32,16 @@ class LinkController extends Controller
         return Admin::content(function (Content $content) {
             $content->header('统计查看');
             $cates =DB::table("categories")->where("parent_id",'!=',0)->get();
-            $content->row(function ($row)use($cates) {
-                foreach ($cates as $cate){
-                    $data =DB::table("categories")->where("id",$cate->parent_id)->get()->first()->title;
-                    $row->column(4, new InfoBox($data.":".$cate->title, '', 'aqua', action('\App\Admin\Controllers\LinkController@index', ['data' => $cate->title]) ,
-                        $count =DB::table("link")->where("data",$cate->title)->count()));
-                }
-            });
+            if($cates){
+                $content->row(function ($row)use($cates) {
+                    foreach ($cates as $cate){
+                        $data =DB::table("categories")->where("id",$cate->parent_id)->get()->first()->title;
+                        $row->column(4, new InfoBox($data.":".$cate->title, '', 'aqua', action('\App\Admin\Controllers\LinkController@index', ['data' => $cate->title]) ,
+                            $count =DB::table("link")->where("data",$cate->title)->count()));
+                    }
+                });
+            }
+
             $content->body($this->grid());
         });
     }

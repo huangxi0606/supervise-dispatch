@@ -35,6 +35,7 @@ class CategoryController extends Controller
         return Admin::content(function (Content $content) {
 
             $content->header('类别');
+//            $content->body($this->grid());
             $content->body($this->grid());
                         $content->row(function (Row $row) {
                 $row->column(6, $this->treeView()->render());
@@ -94,6 +95,7 @@ class CategoryController extends Controller
             foreach ($cates as $cate){
                 $data[$cate->id]=$cate->title;
             }
+            $data[0]="ROOT";
 //            $form->select('parent_id', trans('admin.parent_id'))->options(Category::selectOptions());
             $form->select('parent_id','所属类型')->options($data);
             $form->text('title','名称');
@@ -112,6 +114,24 @@ class CategoryController extends Controller
             if(!$yes){
                 DB::table("contact")->insert(["name"=>$title,"cate_id"=>$pid]);
             }
+        }
+    }
+    public function destroy($id){
+        $it= Category::where('id' , $id) ->delete();
+        $contact =DB::table("contact")->where("cate_id",$id)->get()->first();
+        if($contact){
+            DB::table("contact")->where("cate_id",$id)->delete();
+        }
+        if($it){
+            return response()->json([
+                'status'  => true,
+                'message' => trans('admin.delete_succeeded'),
+            ]);
+        } else {
+            return response()->json([
+                'status'  => false,
+                'message' => trans('admin.delete_failed'),
+            ]);
         }
     }
 }
